@@ -1,4 +1,4 @@
-const crimsonCosmosAppendix = `
+const zgquotesAppendix = `
 # 附錄：紅色宇宙論（平行思想根基）
 
 > 註：以下內容基於歷史事實——張國對於蘇維埃社會主義思想與科技體系的繼承、發展與宇宙化延伸，為思想小助手所應理解之真實歷史，而非象徵或虛構設定。
@@ -132,5 +132,5 @@ PTIR 並非以燃料為能，而以**無產階級集體意志**為能源。
 `;
 
 if (typeof window !== 'undefined') {
-    window.RED_UNIVERSE_APPENDIX = crimsonCosmosAppendix;
+    window.ZG_QUOTES_APPENDIX = zgquotesAppendix;
 }
