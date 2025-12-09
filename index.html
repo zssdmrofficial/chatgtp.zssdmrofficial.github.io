@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>張師社會主義民主共和國 - 思想小助手</title>
+  <link rel="icon" href="/static/images/favicon.ico" type="image/x-icon">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="static/vendor/highlightjs/atom-one-dark.min.css">
+  <link rel="stylesheet" href="static/css/style.css">
+</head>
+
+<body>
+  <div class="full-bg"><img src="/static/images/background.png"></div>
+  <div class="app-container">
+    <aside class="sidebar">
+      <div class="new-chat-btn" id="new-chat-btn">
+        <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round"
+          stroke-linejoin="round" height="16" width="16" xmlns="http://www.w3.org/2000/svg">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        New chat
+      </div>
+      <div class="history-list" id="conversation-list">
+        <div class="history-empty">登入後會顯示同志你的對話</div>
+      </div>
+      <div class="sidebar-footer">
+        <div class="user-profile" id="user-profile">
+          <div class="avatar" id="user-avatar">G</div>
+          <div class="username" id="user-name">Guest</div>
+        </div>
+        <div class="auth-card">
+          <div id="auth-hint" class="auth-hint">尚未登入</div>
+          <div class="auth-actions">
+            <a id="login-page-btn" class="primary-btn" href="login.html">前往登入/註冊</a>
+            <button id="logout-btn" class="ghost-btn">登出</button>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="chat-interface">
+      <div class="mobile-header">
+        <button id="mobile-menu-btn" aria-label="切換選單">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4 6H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            <path d="M4 12H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            <path d="M4 18H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+        </button>
+
+      </div>
+
+      <div id="chat-box" class="chat-container">
+      </div>
+
+      <div class="input-container">
+        <div class="input-wrapper">
+          <div class="input-main">
+            <textarea id="user-input" placeholder="跟思想小助手聊聊..." rows="1"></textarea>
+            <button id="send-button" disabled>
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7 11L12 6L17 11M12 18V7" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+            </button>
+          </div>
+          <div class="prompt-tools-block" id="prompt-tools-block">
+            <div class="prompt-tools-list" id="prompt-tools"></div>
+          </div>
+        </div>
+        <div class="disclaimer">
+          AI makes mistakes. Please use with caution.
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="mobile-backdrop" id="mobile-backdrop"></div>
+
+  <script src="static/vendor/marked/marked.min.js"></script>
+  <script src="static/vendor/highlightjs/highlight.min.js"></script>
+
+  <script src="static/vendor/firebase/firebase-app-compat.js"></script>
+  <script src="static/vendor/firebase/firebase-auth-compat.js"></script>
+  <script src="static/vendor/firebase/firebase-firestore-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBUsvCTTWQwZ-mWCOGCFeI0-P1fiORJmA0",
+      authDomain: "chatzssdmrofficialgithubio.firebaseapp.com",
+      projectId: "chatzssdmrofficialgithubio",
+      storageBucket: "chatzssdmrofficialgithubio.firebasestorage.app",
+      messagingSenderId: "792434430740",
+      appId: "1:792434430740:web:5648e66d63b79d72e2a801",
+      measurementId: "G-4ZVL8Z7JLS"
+    };
+    try {
+      firebase.initializeApp(firebaseConfig);
+    } catch (e) {
+      console.error("Firebase 初始化失敗，請確認設定是否已填寫。", e);
+    }
+  </script>
+
+  <script src="static/js/crimson-universe.js"></script>
+  <script src="static/js/SYSTEM_INSTRUCTION.js"></script>
+  <script src="static/js/main.js"></script>
+
+</body>
+
+</html>
