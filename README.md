@@ -1,1 +1,1 @@
-https://chat.zssdmr.dpdns.org
+https://chatgpt.zssdmr.dpdns.org
