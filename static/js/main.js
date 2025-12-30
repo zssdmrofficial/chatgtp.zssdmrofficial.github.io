@@ -1,8 +1,8 @@
-const API_URL = "https://gemini-api.zssdmrofficial.workers.dev/"; 
+const API_URL = "https://gemini-api.zssdmrofficial.workers.dev/";
 
 const auth = firebase.auth();
 const db = firebase.firestore();
-// Force long polling to avoid QUIC transport errors on restricted networks.
+
 try {
     db.settings({
         experimentalAutoDetectLongPolling: true,
