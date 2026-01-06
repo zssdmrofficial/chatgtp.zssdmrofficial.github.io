@@ -1,4 +1,4 @@
-const API_URL = "https://gemini-api.zssdmrofficial.workers.dev/";
+const API_URL = "https://gemini-api.zssdmr.dpdns.org/";
 
 const auth = firebase.auth();
 const db = firebase.firestore();
