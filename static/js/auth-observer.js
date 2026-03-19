@@ -15,11 +15,11 @@ auth.onAuthStateChanged(async (user) => {
         if (typeof data.isSearchEnabled !== 'undefined') {
           isSearchEnabled = data.isSearchEnabled;
         } else {
-          isSearchEnabled = false;
+          isSearchEnabled = true;
         }
       } else {
         isPythonEnabled = true;
-        isSearchEnabled = false;
+        isSearchEnabled = true;
       }
     } catch (e) {
       console.warn('讀取使用者設定失敗', e);
