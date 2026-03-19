@@ -1,0 +1,359 @@
+.input-container {
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    padding: 24px;
+    width: 100%;
+    z-index: 100;
+    overflow: visible;
+}
+
+.input-container::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image: url('/static/images/background.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    filter: brightness(60%) grayscale(18%) blur(2px);
+    -webkit-mask-image: linear-gradient(180deg, transparent, black 20%);
+    mask-image: linear-gradient(180deg, transparent, black 20%);
+}
+
+.input-wrapper {
+    max-width: 768px;
+    margin: 0 auto;
+    background-color: var(--input-bg);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-radius: 26px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    border: 1px solid var(--glass-highlight);
+    box-shadow:
+        0 4px 20px rgba(0, 0, 0, 0.2),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease;
+}
+
+.input-main {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+}
+
+.input-wrapper:focus-within {
+    border-color: color-mix(in srgb, var(--accent-color) 30%, white 20%);
+    box-shadow:
+        0 8px 30px rgba(0, 0, 0, 0.3),
+        0 0 15px var(--accent-glow);
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.prompt-tools-block {
+    width: 100%;
+    padding-top: 8px;
+    border-top: 1px solid var(--glass-border);
+}
+
+.prompt-tools-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    min-height: 32px;
+}
+
+.tool-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: 14px;
+    cursor: pointer;
+    border: 1px solid var(--glass-border);
+    color: var(--text-secondary);
+    background: rgba(255, 255, 255, 0.03);
+    transition: all 0.2s ease;
+}
+
+.tool-pill.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    border-color: var(--glass-border);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.tool-pill.disabled:hover {
+    color: var(--text-secondary);
+    border-color: var(--glass-border);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.tool-pill:hover {
+    color: var(--text-primary);
+    border-color: color-mix(in srgb, var(--accent-color) 40%, white 10%);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.tool-pill.active {
+    border-color: color-mix(in srgb, var(--accent-color) 55%, white 10%);
+    background: rgba(255, 255, 255, 0.12);
+    color: var(--text-primary);
+    box-shadow: 0 0 12px var(--accent-glow);
+}
+
+.tool-pill-icon,
+.tool-pill-remove {
+    width: 20px;
+    height: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+}
+
+.tool-pill-remove {
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.tool-pill.active .tool-pill-remove {
+    opacity: 1;
+}
+
+.tool-pill-remove svg,
+.tool-pill-icon svg {
+    width: 16px;
+    height: 16px;
+}
+
+textarea {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    font-size: 16px;
+    resize: none;
+    max-height: 200px;
+    padding: 4px 0;
+    font-family: inherit;
+    line-height: 1.5;
+}
+
+textarea:focus {
+    outline: none;
+}
+
+textarea::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+button#send-button {
+    background: var(--accent-strong);
+    color: #1a1a1a;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    flex-shrink: 0;
+    box-shadow: 0 2px 10px var(--accent-glow);
+}
+
+button#send-button:hover:not(:disabled) {
+    transform: scale(1.1);
+    background: #fff;
+}
+
+button#send-button:disabled {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.2);
+    cursor: default;
+    box-shadow: none;
+}
+
+button#send-button svg {
+    width: 16px;
+    height: 16px;
+}
+
+.disclaimer {
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 12px;
+    opacity: 0.6;
+}
+
+.thinking-pill-wrapper,
+.prompt-pill-wrapper {
+    position: relative;
+    display: inline-flex;
+}
+
+.thinking-pill .tool-pill-label:empty,
+.prompt-pill .tool-pill-label:empty {
+    display: none;
+}
+
+.thinking-pill-chevron,
+.prompt-pill-chevron {
+    width: 16px;
+    height: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease;
+    margin-left: -2px;
+}
+
+.thinking-pill-chevron svg,
+.prompt-pill-chevron svg {
+    width: 14px;
+    height: 14px;
+}
+
+.thinking-dropdown.open~.thinking-pill .thinking-pill-chevron,
+.thinking-pill-wrapper:has(.thinking-dropdown.open) .thinking-pill-chevron,
+.prompt-dropdown.open~.prompt-pill .prompt-pill-chevron,
+.prompt-pill-wrapper:has(.prompt-dropdown.open) .prompt-pill-chevron {
+    transform: rotate(180deg);
+}
+
+.thinking-dropdown,
+.prompt-dropdown {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 0;
+    min-width: 180px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 14px;
+    padding: 6px;
+    display: flex;
+    opacity: 0;
+    pointer-events: none;
+    flex-direction: column;
+    gap: 2px;
+    box-shadow: 0 18px 60px rgba(0, 0, 0, 0.4);
+    z-index: 1000;
+    overflow: hidden;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.thinking-dropdown::before,
+.prompt-dropdown::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image: url('/static/images/background.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    filter: brightness(60%) grayscale(18%) blur(2px);
+}
+
+.thinking-dropdown.open,
+.prompt-dropdown.open {
+    opacity: 1;
+    pointer-events: auto;
+    animation: thinkingDropdownIn 0.15s ease-out;
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+@keyframes dropdownIn {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.thinking-dropdown-item,
+.prompt-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 13px;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+    font-family: inherit;
+    text-align: left;
+    width: 100%;
+}
+
+.thinking-dropdown-item:hover,
+.prompt-dropdown-item:hover:not(.search-disabled) {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-primary);
+}
+
+.prompt-dropdown-item.search-disabled {
+    opacity: 0.5;
+    cursor: pointer;
+}
+
+.prompt-dropdown-item.search-disabled:hover {
+    background: transparent;
+}
+
+.thinking-dropdown-item.selected,
+.prompt-dropdown-item.selected {
+    background: rgba(255, 255, 255, 0.12);
+    color: var(--accent-strong);
+    font-weight: 500;
+}
+
+.prompt-dropdown-item .tool-pill-icon svg,
+.thinking-dropdown-item .tool-pill-icon svg {
+    width: 16px;
+    height: 16px;
+}
+
+.input-bg-footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 50%;
+    z-index: -1;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.input-bg-footer::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url('/static/images/background.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    filter: brightness(60%) grayscale(18%) blur(2px);
+}

@@ -14,6 +14,7 @@
     rel="stylesheet">
 
   <link rel="stylesheet" href="static/vendor/highlightjs/atom-one-dark.min.css">
+  <link rel="stylesheet" href="static/vendor/katex/katex.min.css">
   <link rel="stylesheet" href="static/css/style.css">
 </head>
 
@@ -21,13 +22,17 @@
   <div class="full-bg"><img src="/static/images/background.png"></div>
   <div class="app-container">
     <aside class="sidebar">
-      <div class="new-chat-btn" id="new-chat-btn">
-        <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round"
-          stroke-linejoin="round" height="16" width="16" xmlns="http://www.w3.org/2000/svg">
-          <line x1="12" y1="5" x2="12" y2="19"></line>
-          <line x1="5" y1="12" x2="19" y2="12"></line>
-        </svg>
-        New chat
+      <div style="display: flex; gap: 8px; align-items: center;">
+        <div class="new-chat-btn" id="new-chat-btn" style="flex-grow: 1;">
+          <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round"
+            stroke-linejoin="round" height="16" width="16" xmlns="http://www.w3.org/2000/svg">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          New chat
+        </div>
+        <button id="temp-chat-btn" class="icon-btn temp-chat-btn" title="臨時對話模式" style="border-radius: 50%; width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center; background-color: rgba(255, 255, 255, 0.03); border: 1px solid var(--glass-border); color: var(--text-primary); cursor: pointer; transition: all 0.3s ease; flex-shrink: 0; margin-top: 0;">
+        </button>
       </div>
       <div class="history-list" id="conversation-list">
         <div class="history-empty">登入後會顯示您的對話</div>
@@ -48,6 +53,7 @@
     </aside>
 
     <main class="chat-interface">
+      <div id="temp-chat-banner" class="temp-chat-banner" style="display: none; background-color: rgba(255, 255, 255, 0.05); color: var(--text-secondary); text-align: center; padding: 8px; font-weight: 500; border-bottom: 1px solid var(--glass-border); font-size: 13px; z-index: 100; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);">臨時對話模式</div>
       <div class="mobile-header">
         <button id="mobile-menu-btn" aria-label="切換選單">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -78,16 +84,19 @@
           </div>
         </div>
         <div class="disclaimer">
-          AI makes mistakes. Please use with caution.
+          AI有時可能會出錯。
         </div>
+        <div class="input-bg-footer"></div>
       </div>
     </main>
   </div>
 
   <div class="mobile-backdrop" id="mobile-backdrop"></div>
 
+  <script src="static/vendor/katex/katex.min.js"></script>
   <script src="static/vendor/marked/marked.min.js"></script>
   <script src="static/vendor/highlightjs/highlight.min.js"></script>
+  <script src="static/vendor/jszip/jszip.min.js"></script>
 
   <script src="static/vendor/firebase/firebase-app-compat.js"></script>
   <script src="static/vendor/firebase/firebase-auth-compat.js"></script>
@@ -108,10 +117,24 @@
       console.error("Firebase 初始化失敗，請確認設定是否已填寫。", e);
     }
   </script>
-
-  <script src="static/js/SYSTEM_INSTRUCTION.js"></script>
-  <script src="static/js/zg-quotes.js"></script>
-  <script src="static/js/main.js"></script>
+  <script src="static/js/svg-icons.js"></script>
+  <script src="static/js/constants.js"></script>
+  <script src="static/js/system-instruction.js"></script>
+  <script src="static/js/firebase-init.js"></script>
+  <script src="static/js/state.js"></script>
+  <script src="static/js/utils.js"></script>
+  <script src="static/js/dom-elements.js"></script>
+  <script src="static/js/prompt-tools.js"></script>
+  <script src="static/js/ui.js"></script>
+  <script src="static/js/chat-ui.js"></script>
+  <script src="static/js/db.js"></script>
+  <script src="static/js/modals.js"></script>
+  <script src="static/js/auth-db-actions.js"></script>
+  <script src="static/js/auth-observer.js"></script>
+  <script src="static/js/api-utils.js"></script>
+  <script src="static/js/search-utils.js"></script>
+  <script src="static/js/chat-api.js"></script>
+  <script src="static/js/events.js"></script>
 
 </body>
 
