@@ -1,0 +1,21 @@
+:root {
+    --accent-color: #ff8888;
+    --accent-strong: color-mix(in srgb, var(--accent-color) 85%, white 15%);
+    --accent-soft: color-mix(in srgb, var(--accent-color) 40%, white 10%);
+    --accent-glow: color-mix(in srgb, var(--accent-color) 35%, transparent);
+    --bg-color: #050505;
+    --bg-dark-overlay: rgba(0, 0, 0, 0.55);
+    --sidebar-bg: rgba(0, 0, 0, 0.25);
+    --input-bg: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-highlight: rgba(255, 255, 255, 0.14);
+    --text-primary: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.65);
+    --code-bg: rgba(0, 0, 0, 0.3);
+    --user-msg-bg: rgba(255, 255, 255, 0.06);
+    --user-bubble-bg: color-mix(in srgb, var(--accent-color) 65%, white 25%);
+    --user-bubble-text: #1b1b1b;
+    --border-color: var(--glass-border);
+    --radius-ui: 24px;
+    --radius-sm: 12px;
+}
