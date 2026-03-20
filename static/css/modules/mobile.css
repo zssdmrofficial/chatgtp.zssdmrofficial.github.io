@@ -29,7 +29,7 @@
 
     .input-container {
         padding: 8px 12px max(8px, env(safe-area-inset-bottom));
-        bottom: 0;
+        --input-fade-height: 32px;
     }
 
     .input-wrapper {
