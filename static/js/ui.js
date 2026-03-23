@@ -742,10 +742,42 @@ function initCopyHandler(element) {
     const messageBtn = ev.target.closest('.copy-message-btn');
     if (messageBtn) {
       const wrapper = messageBtn.closest('.message-wrapper');
-      const datasetValue = wrapper?.dataset.raw || '';
-      const fallbackValue =
-        wrapper?.querySelector('.text-content')?.innerText || '';
-      const textToCopy = datasetValue || fallbackValue;
+      const isUser = wrapper?.dataset.role === 'user';
+      let textToCopy = '';
+
+      if (isUser) {
+        const datasetValue = wrapper?.dataset.raw || '';
+        const fallbackValue =
+          wrapper?.querySelector('.text-content')?.innerText || '';
+        textToCopy = datasetValue || fallbackValue;
+      } else {
+        const textContentEl = wrapper?.querySelector('.text-content');
+        if (textContentEl) {
+          const originalThinkingDetails =
+            textContentEl.querySelectorAll('.thinking-details');
+          const originalDisplays = [];
+          originalThinkingDetails.forEach((el) => {
+            originalDisplays.push(el.style.display);
+            el.style.display = 'none';
+          });
+
+          const copyBtns = textContentEl.querySelectorAll('.copy-button');
+          const copyBtnDisplays = [];
+          copyBtns.forEach((btn) => {
+            copyBtnDisplays.push(btn.style.display);
+            btn.style.display = 'none';
+          });
+
+          textToCopy = textContentEl.innerText.trim();
+
+          originalThinkingDetails.forEach((el, i) => {
+            el.style.display = originalDisplays[i];
+          });
+          copyBtns.forEach((btn, i) => {
+            btn.style.display = copyBtnDisplays[i];
+          });
+        }
+      }
 
       if (!textToCopy) {
         flashMessageCopyState(messageBtn, 'error');
