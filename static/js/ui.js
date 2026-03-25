@@ -673,6 +673,56 @@ function markdownToHtml(mdText) {
   return escapeHtml(mdText);
 }
 
+function getLatexSourceFromKatex(rootEl) {
+  if (!rootEl || typeof rootEl.querySelector !== 'function') return '';
+  const annotation = rootEl.querySelector(
+    'annotation[encoding="application/x-tex"]',
+  );
+  if (annotation && typeof annotation.textContent === 'string') {
+    return annotation.textContent;
+  }
+  const dataLatex =
+    typeof rootEl.getAttribute === 'function'
+      ? rootEl.getAttribute('data-latex')
+      : '';
+  return dataLatex || '';
+}
+
+function swapLatexForCopy(container) {
+  if (!container) return () => {};
+  const swaps = [];
+
+  const replaceWithLatex = (node, isBlock) => {
+    const latex = getLatexSourceFromKatex(node);
+    if (!latex) return;
+    const wrapper = isBlock ? '$$' : '$';
+    const textNode = document.createTextNode(`${wrapper}${latex}${wrapper}`);
+    const parent = node.parentNode;
+    if (!parent) return;
+    parent.replaceChild(textNode, node);
+    swaps.push({ parent, textNode, node });
+  };
+
+  const displayNodes = Array.from(container.querySelectorAll('.katex-display'));
+  displayNodes.forEach((node) => replaceWithLatex(node, true));
+
+  const inlineNodes = Array.from(container.querySelectorAll('.katex'));
+  inlineNodes.forEach((node) => {
+    if (node.closest('.katex-display')) return;
+    replaceWithLatex(node, false);
+  });
+
+  return () => {
+    for (let i = swaps.length - 1; i >= 0; i -= 1) {
+      const { parent, textNode, node } = swaps[i];
+      if (!parent) continue;
+      if (textNode.parentNode === parent) {
+        parent.replaceChild(node, textNode);
+      }
+    }
+  };
+}
+
 function setMessageCopyButtonState(button, state = 'default') {
   if (!button) return;
   const originalLabel =
@@ -768,7 +818,13 @@ function initCopyHandler(element) {
             btn.style.display = 'none';
           });
 
-          textToCopy = textContentEl.innerText.trim();
+          let restoreLatex = null;
+          try {
+            restoreLatex = swapLatexForCopy(textContentEl);
+            textToCopy = textContentEl.innerText.trim();
+          } finally {
+            if (restoreLatex) restoreLatex();
+          }
 
           originalThinkingDetails.forEach((el, i) => {
             el.style.display = originalDisplays[i];
