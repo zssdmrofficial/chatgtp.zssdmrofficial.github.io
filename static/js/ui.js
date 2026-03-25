@@ -803,35 +803,24 @@ function initCopyHandler(element) {
       } else {
         const textContentEl = wrapper?.querySelector('.text-content');
         if (textContentEl) {
-          const originalThinkingDetails =
-            textContentEl.querySelectorAll('.thinking-details');
-          const originalDisplays = [];
-          originalThinkingDetails.forEach((el) => {
-            originalDisplays.push(el.style.display);
-            el.style.display = 'none';
-          });
+          const copyRoot = textContentEl.cloneNode(true);
+          copyRoot
+            .querySelectorAll('.thinking-details, .copy-button')
+            .forEach((el) => el.remove());
 
-          const copyBtns = textContentEl.querySelectorAll('.copy-button');
-          const copyBtnDisplays = [];
-          copyBtns.forEach((btn) => {
-            copyBtnDisplays.push(btn.style.display);
-            btn.style.display = 'none';
-          });
-
-          let restoreLatex = null;
           try {
-            restoreLatex = swapLatexForCopy(textContentEl);
-            textToCopy = textContentEl.innerText.trim();
-          } finally {
-            if (restoreLatex) restoreLatex();
+            swapLatexForCopy(copyRoot);
+            const ghost = document.createElement('div');
+            ghost.style.cssText =
+              'position:fixed;left:-99999px;top:0;height:0;overflow:hidden;pointer-events:none;';
+            ghost.appendChild(copyRoot);
+            document.body.appendChild(ghost);
+            textToCopy = copyRoot.innerText.trim();
+            document.body.removeChild(ghost);
+          } catch (err) {
+            console.error('複製訊息失敗', err);
+            textToCopy = copyRoot.textContent?.trim() || '';
           }
-
-          originalThinkingDetails.forEach((el, i) => {
-            el.style.display = originalDisplays[i];
-          });
-          copyBtns.forEach((btn, i) => {
-            btn.style.display = copyBtnDisplays[i];
-          });
         }
       }
 
