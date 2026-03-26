@@ -88,21 +88,19 @@ async function deleteAllConversations() {
 
       let batch = db.batch();
       let counter = 0;
-      const commits = [];
 
-      messagesSnap.forEach((msgDoc) => {
+      for (const msgDoc of messagesSnap.docs) {
         batch.delete(msgDoc.ref);
         counter++;
         if (counter === FIRESTORE_BATCH_LIMIT) {
-          commits.push(batch.commit());
+          await batch.commit();
           batch = db.batch();
           counter = 0;
         }
-      });
-      if (counter > 0) {
-        commits.push(batch.commit());
       }
-      await Promise.all(commits);
+      if (counter > 0) {
+        await batch.commit();
+      }
       await convRef.delete();
       deleted++;
     }

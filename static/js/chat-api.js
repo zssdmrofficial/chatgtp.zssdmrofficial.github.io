@@ -850,7 +850,7 @@ async function sendMessage() {
         composedText,
         text,
         false,
-        userParts,
+        userParts.filter((p) => p.text !== undefined),
       );
       userMsg.messageId = userMsgId;
       await updateConversationTitleIfEmpty(activeConvId, text);
