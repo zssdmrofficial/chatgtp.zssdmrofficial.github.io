@@ -29,21 +29,19 @@ async function handleDeleteAccount() {
 
       let batch = db.batch();
       let counter = 0;
-      const commits = [];
 
-      messagesSnap.forEach((msgDoc) => {
+      for (const msgDoc of messagesSnap.docs) {
         batch.delete(msgDoc.ref);
         counter++;
         if (counter === FIRESTORE_BATCH_LIMIT) {
-          commits.push(batch.commit());
+          await batch.commit();
           batch = db.batch();
           counter = 0;
         }
-      });
-      if (counter > 0) {
-        commits.push(batch.commit());
       }
-      await Promise.all(commits);
+      if (counter > 0) {
+        await batch.commit();
+      }
       await convRef.delete();
     }
 
@@ -89,23 +87,21 @@ async function deleteConversation(convId) {
     }
 
     const messagesSnap = await convRef.collection('messages').get();
-    const commits = [];
     let batch = db.batch();
     let counter = 0;
 
-    messagesSnap.forEach((msgDoc) => {
+    for (const msgDoc of messagesSnap.docs) {
       batch.delete(msgDoc.ref);
       counter++;
       if (counter === FIRESTORE_BATCH_LIMIT) {
-        commits.push(batch.commit());
+        await batch.commit();
         batch = db.batch();
         counter = 0;
       }
-    });
-    if (counter > 0) {
-      commits.push(batch.commit());
     }
-    await Promise.all(commits);
+    if (counter > 0) {
+      await batch.commit();
+    }
 
     await convRef.delete();
 
@@ -132,27 +128,22 @@ async function deleteMessagesByIds(convId, messageIds = []) {
       .collection('conversations')
       .doc(convId)
       .collection('messages');
-    const commits = [];
     let batch = db.batch();
     let counter = 0;
 
-    messageIds.forEach((id) => {
-      if (!id) return;
+    for (const id of messageIds) {
+      if (!id) continue;
       batch.delete(messagesRef.doc(id));
       counter++;
       if (counter === FIRESTORE_BATCH_LIMIT) {
-        commits.push(batch.commit());
+        await batch.commit();
         batch = db.batch();
         counter = 0;
       }
-    });
-
-    if (counter > 0) {
-      commits.push(batch.commit());
     }
 
-    if (commits.length) {
-      await Promise.all(commits);
+    if (counter > 0) {
+      await batch.commit();
     }
   } catch (e) {
     console.error('刪除訊息失敗', e);
