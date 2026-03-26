@@ -43,23 +43,90 @@ function updatePromptToolBlockVisibility() {
 
 function updateAttachPhotoButtonState() {
   if (!attachPhotoBtn) return;
-  const disabled = isAwaitingResponse;
+  const disabled = isAwaitingResponse || pendingImageFiles.length >= 5;
   attachPhotoBtn.disabled = disabled;
   attachPhotoBtn.setAttribute('aria-disabled', disabled.toString());
   attachPhotoBtn.classList.toggle('disabled', disabled);
-  const hasImage = !!pendingImageFile;
-  attachPhotoBtn.classList.toggle('is-selected', hasImage);
-  const label = hasImage ? `已選擇圖片：${pendingImageFile.name}` : '上傳圖片';
+  const hasImages = pendingImageFiles.length > 0;
+  attachPhotoBtn.classList.toggle('is-selected', hasImages);
+  const label = hasImages
+    ? `已選擇 ${pendingImageFiles.length} 張圖片`
+    : '上傳圖片';
   attachPhotoBtn.setAttribute('aria-label', label);
   attachPhotoBtn.title = label;
 }
 
-function setPendingImage(file) {
-  pendingImageFile = file || null;
-  if (!pendingImageFile && attachPhotoInput) {
+function clearPendingImages() {
+  pendingImageFiles = [];
+  if (attachPhotoInput) {
     attachPhotoInput.value = '';
   }
   updateAttachPhotoButtonState();
+  if (imagePreviewContainer) {
+    imagePreviewContainer.innerHTML = '';
+    imagePreviewContainer.style.display = 'none';
+  }
+}
+
+function removePendingImage(index) {
+  pendingImageFiles.splice(index, 1);
+  updateAttachPhotoButtonState();
+  renderPendingImages();
+}
+
+function addPendingImages(files) {
+  for (let i = 0; i < files.length; i++) {
+    if (pendingImageFiles.length >= 5) break;
+    pendingImageFiles.push(files[i]);
+  }
+  updateAttachPhotoButtonState();
+  renderPendingImages();
+}
+
+function renderPendingImages() {
+  if (!imagePreviewContainer) return;
+  imagePreviewContainer.innerHTML = '';
+
+  if (pendingImageFiles.length === 0) {
+    imagePreviewContainer.style.display = 'none';
+    if (attachPhotoInput) attachPhotoInput.value = '';
+    return;
+  }
+
+  imagePreviewContainer.style.display = 'flex';
+
+  pendingImageFiles.forEach((file, index) => {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'image-preview-wrapper';
+
+    const img = document.createElement('img');
+    img.alt = `預覽圖片 ${index + 1}`;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+
+    const removeBtn = document.createElement('button');
+    removeBtn.className = 'remove-image-btn';
+    removeBtn.type = 'button';
+    removeBtn.setAttribute('aria-label', '移除圖片');
+    removeBtn.innerHTML = `
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    `;
+
+    removeBtn.addEventListener('click', () => {
+      removePendingImage(index);
+    });
+
+    wrapper.appendChild(img);
+    wrapper.appendChild(removeBtn);
+    imagePreviewContainer.appendChild(wrapper);
+  });
 }
 
 let isAttachedDataAccordionOpen = false;

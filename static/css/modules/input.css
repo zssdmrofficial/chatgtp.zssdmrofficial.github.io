@@ -200,6 +200,60 @@ textarea::placeholder {
     background: rgba(255, 255, 255, 0.02);
 }
 
+.image-preview-container {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-left: 44px; /* Align with the text input padding */
+    margin-top: 4px;
+    margin-bottom: -4px;
+}
+
+.image-preview-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.image-preview-wrapper img {
+    max-height: 80px;
+    max-width: 120px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 1px solid var(--glass-border);
+    display: block;
+}
+
+.remove-image-btn {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background-color: var(--card-bg);
+    border: 1px solid var(--glass-border);
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.remove-image-btn:hover {
+    background-color: rgba(255, 60, 60, 0.2);
+    color: #ff4444;
+    border-color: #ff4444;
+}
+
+.remove-image-btn svg {
+    width: 12px;
+    height: 12px;
+}
+
 button#send-button {
     background: var(--accent-strong);
     color: #1a1a1a;
