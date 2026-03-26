@@ -848,6 +848,7 @@ async function sendMessage() {
         composedText,
         text,
         false,
+        userParts,
       );
       userMsg.messageId = userMsgId;
       await updateConversationTitleIfEmpty(activeConvId, text);

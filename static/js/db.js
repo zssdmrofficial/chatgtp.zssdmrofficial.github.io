@@ -125,7 +125,7 @@ async function loadMessages(convId) {
       const displayText = data.displayContent || content;
       return {
         role: data.role,
-        parts: [{ text: content }],
+        parts: data.parts || [{ text: content }],
         displayText,
         messageId: d.id,
         isHtml: data.isHtml === true,
@@ -146,6 +146,7 @@ async function addMessage(
   content,
   displayContent = null,
   isHtml = false,
+  parts = null,
 ) {
   if (!convId) return null;
   const user = auth.currentUser;
@@ -160,6 +161,7 @@ async function addMessage(
       content,
       displayContent: displayContent || content,
       isHtml,
+      parts: parts || [{ text: content }],
       userId: user.uid,
       ts: firebase.firestore.FieldValue.serverTimestamp(),
     });
