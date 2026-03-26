@@ -30,6 +30,33 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderHistory();
   initCopyHandler(chatBoxEl);
   renderPromptTools();
+  if (attachPhotoBtn) {
+    attachPhotoBtn.innerHTML = ATTACH_PHOTO_ICON;
+    attachPhotoBtn.addEventListener('click', () => {
+      if (attachPhotoBtn.disabled || !attachPhotoInput) return;
+      attachPhotoInput.click();
+    });
+  }
+  if (attachPhotoInput) {
+    const mimeTypes =
+      Array.isArray(GEMINI_IMAGE_MIME_TYPES) && GEMINI_IMAGE_MIME_TYPES.length
+        ? GEMINI_IMAGE_MIME_TYPES
+        : ['image/png', 'image/jpeg', 'image/webp', 'image/heic', 'image/heif'];
+    attachPhotoInput.accept = mimeTypes.join(',');
+    attachPhotoInput.addEventListener('change', () => {
+      const file = attachPhotoInput.files?.[0] || null;
+      if (!file) {
+        setPendingImage(null);
+        return;
+      }
+      if (mimeTypes.includes(file.type)) {
+        setPendingImage(file);
+      } else {
+        setPendingImage(null);
+        setAuthHint(`不支援的圖片格式，僅支援：${mimeTypes.join(', ')}`, true);
+      }
+    });
+  }
   if (loginBtn) loginBtn.addEventListener('click', handleSignIn);
   if (signupBtn) signupBtn.addEventListener('click', handleSignUp);
   if (logoutBtn) logoutBtn.addEventListener('click', handleSignOut);
