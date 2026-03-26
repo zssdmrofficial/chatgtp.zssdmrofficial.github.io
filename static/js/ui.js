@@ -41,6 +41,27 @@ function updatePromptToolBlockVisibility() {
   promptToolsBlockEl.style.display = '';
 }
 
+function updateAttachPhotoButtonState() {
+  if (!attachPhotoBtn) return;
+  const disabled = isAwaitingResponse;
+  attachPhotoBtn.disabled = disabled;
+  attachPhotoBtn.setAttribute('aria-disabled', disabled.toString());
+  attachPhotoBtn.classList.toggle('disabled', disabled);
+  const hasImage = !!pendingImageFile;
+  attachPhotoBtn.classList.toggle('is-selected', hasImage);
+  const label = hasImage ? `已選擇圖片：${pendingImageFile.name}` : '上傳圖片';
+  attachPhotoBtn.setAttribute('aria-label', label);
+  attachPhotoBtn.title = label;
+}
+
+function setPendingImage(file) {
+  pendingImageFile = file || null;
+  if (!pendingImageFile && attachPhotoInput) {
+    attachPhotoInput.value = '';
+  }
+  updateAttachPhotoButtonState();
+}
+
 let isAttachedDataAccordionOpen = false;
 let isPromptDropdownOpen = false;
 
@@ -290,6 +311,7 @@ function updateSendButtonState() {
     sendButtonEl.innerHTML = iconMarkup;
   }
   updateSearchPillState();
+  updateAttachPhotoButtonState();
   adjustChatPadding();
 }
 
@@ -445,6 +467,7 @@ function updateAuthUI(user) {
 function clearChatUI() {
   chatBoxEl.innerHTML = '';
   history = [];
+  setPendingImage(null);
 }
 
 function updateTempChatBtnUI() {

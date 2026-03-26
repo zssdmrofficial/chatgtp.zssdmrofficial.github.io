@@ -160,6 +160,46 @@ textarea::placeholder {
     color: rgba(255, 255, 255, 0.3);
 }
 
+.attach-photo-btn {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--glass-border);
+    color: var(--text-secondary);
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    font-size: 18px;
+    line-height: 1;
+}
+
+.attach-photo-btn svg {
+    width: 18px;
+    height: 18px;
+}
+
+.attach-photo-btn:hover:not(:disabled) {
+    color: var(--text-primary);
+    border-color: color-mix(in srgb, var(--accent-color) 40%, white 10%);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.attach-photo-btn.is-selected {
+    color: var(--accent-strong);
+    border-color: color-mix(in srgb, var(--accent-color) 55%, white 10%);
+    box-shadow: 0 0 12px var(--accent-glow);
+}
+
+.attach-photo-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: rgba(255, 255, 255, 0.02);
+}
+
 button#send-button {
     background: var(--accent-strong);
     color: #1a1a1a;

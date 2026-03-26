@@ -3,6 +3,14 @@ const PYTHON_API_URL = 'https://zssdmr-python.hf.space/';
 const SEARXNG_PROXY_URL = 'https://searxng-proxy.zssdmr.dpdns.org/';
 const BROWSE_PROXY_URL = 'https://browse-proxy.zssdmr.dpdns.org/';
 
+const GEMINI_IMAGE_MIME_TYPES = [
+  'image/png',
+  'image/jpeg',
+  'image/webp',
+  'image/heic',
+  'image/heif',
+];
+
 const PYTHON_SYSTEM_PROMPT_ADDITION = `
 【能力擴充通知】
 你現在擁有一個遠端 Python 執行環境 (基於 Flask/Hugging Face Space API)。
