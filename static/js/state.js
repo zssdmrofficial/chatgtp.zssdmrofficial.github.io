@@ -12,4 +12,4 @@ let animatingConversationId = null;
 let abortController = null;
 let currentThinkingLevel = 'MINIMAL';
 let isTempChatMode = false;
-let pendingImageFile = null;
+let pendingImageFiles = [];

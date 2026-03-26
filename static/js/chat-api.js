@@ -753,38 +753,40 @@ async function sendMessage() {
   const text = inputEl.value.trim();
   if (!text) return;
 
-  let imagePart = null;
-  if (pendingImageFile) {
-    try {
-      const base64Data = await new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          const result = reader.result;
-          if (typeof result !== 'string') {
-            resolve('');
-            return;
-          }
-          const commaIndex = result.indexOf(',');
-          const base64 =
-            commaIndex >= 0 ? result.slice(commaIndex + 1) : result;
-          resolve(base64 || '');
-        };
-        reader.onerror = () =>
-          reject(reader.error || new Error('Failed to read image'));
-        reader.readAsDataURL(pendingImageFile);
-      });
+  let imageParts = [];
+  if (pendingImageFiles && pendingImageFiles.length > 0) {
+    for (const file of pendingImageFiles) {
+      try {
+        const base64Data = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            const result = reader.result;
+            if (typeof result !== 'string') {
+              resolve('');
+              return;
+            }
+            const commaIndex = result.indexOf(',');
+            const base64 =
+              commaIndex >= 0 ? result.slice(commaIndex + 1) : result;
+            resolve(base64 || '');
+          };
+          reader.onerror = () =>
+            reject(reader.error || new Error('Failed to read image'));
+          reader.readAsDataURL(file);
+        });
 
-      if (base64Data) {
-        imagePart = {
-          inline_data: {
-            mime_type: pendingImageFile.type || 'application/octet-stream',
-            data: base64Data,
-          },
-        };
+        if (base64Data) {
+          imageParts.push({
+            inline_data: {
+              mime_type: file.type || 'application/octet-stream',
+              data: base64Data,
+            },
+          });
+        }
+      } catch (e) {
+        setAuthHint('某張圖片讀取失敗，請重新選擇。');
+        return;
       }
-    } catch (e) {
-      setAuthHint('圖片讀取失敗，請重新選擇。');
-      return;
     }
   }
 
@@ -821,8 +823,8 @@ async function sendMessage() {
   updateConversationLockUI();
 
   const userParts = [{ text: composedText }];
-  if (imagePart) {
-    userParts.push(imagePart);
+  if (imageParts.length > 0) {
+    userParts.push(...imageParts);
   }
 
   const userMsg = {
@@ -834,8 +836,8 @@ async function sendMessage() {
   history.push(userMsg);
   renderMessage('user', composedText, false, text, history.length - 1);
 
-  if (pendingImageFile) {
-    setPendingImage(null);
+  if (pendingImageFiles && pendingImageFiles.length > 0) {
+    clearPendingImages();
   }
 
   let loadingId = showLoading();

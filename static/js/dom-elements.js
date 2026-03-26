@@ -3,6 +3,9 @@ const inputEl = document.getElementById('user-input');
 const sendButtonEl = document.getElementById('send-button');
 const attachPhotoBtn = document.getElementById('attach-photo-button');
 const attachPhotoInput = document.getElementById('attach-photo-input');
+const imagePreviewContainer = document.getElementById(
+  'image-preview-container',
+);
 const conversationListEl = document.getElementById('conversation-list');
 const newChatBtn = document.getElementById('new-chat-btn');
 const tempChatBtn = document.getElementById('temp-chat-btn');

@@ -44,16 +44,52 @@ document.addEventListener('DOMContentLoaded', async () => {
         : ['image/png', 'image/jpeg', 'image/webp', 'image/heic', 'image/heif'];
     attachPhotoInput.accept = mimeTypes.join(',');
     attachPhotoInput.addEventListener('change', () => {
-      const file = attachPhotoInput.files?.[0] || null;
-      if (!file) {
-        setPendingImage(null);
+      const files = attachPhotoInput.files
+        ? Array.from(attachPhotoInput.files)
+        : [];
+      if (files.length === 0) {
         return;
       }
-      if (mimeTypes.includes(file.type)) {
-        setPendingImage(file);
-      } else {
-        setPendingImage(null);
-        setAuthHint(`不支援的圖片格式，僅支援：${mimeTypes.join(', ')}`, true);
+
+      let validFiles = [];
+      let invalidFilesFound = false;
+
+      for (const file of files) {
+        if (mimeTypes.includes(file.type)) {
+          validFiles.push(file);
+        } else {
+          invalidFilesFound = true;
+        }
+      }
+
+      if (invalidFilesFound) {
+        setAuthHint(
+          `部分或全部不支援的圖片格式，僅支援：${mimeTypes.join(', ')}`,
+          true,
+        );
+      }
+
+      if (pendingImageFiles.length + validFiles.length > 5) {
+        if (typeof showConfirmModal === 'function') {
+          showConfirmModal('最多只能上傳 5 張圖片');
+        } else {
+          alert('最多只能上傳 5 張圖片');
+        }
+
+        const spaceLeft = 5 - pendingImageFiles.length;
+        if (spaceLeft > 0) {
+          validFiles = validFiles.slice(0, spaceLeft);
+        } else {
+          validFiles = [];
+        }
+
+        if (attachPhotoInput) {
+          attachPhotoInput.value = '';
+        }
+      }
+
+      if (validFiles.length > 0) {
+        addPendingImages(validFiles);
       }
     });
   }
