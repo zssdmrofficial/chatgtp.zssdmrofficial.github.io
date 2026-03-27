@@ -129,10 +129,43 @@ function renderMessage(
         </div>
     `;
 
+  let imagesHtml = '';
+  if (
+    isUser &&
+    typeof messageIndex === 'number' &&
+    typeof history !== 'undefined' &&
+    history[messageIndex]
+  ) {
+    const msg = history[messageIndex];
+    const imgParts = Array.isArray(msg.parts)
+      ? msg.parts.filter((p) => p.inline_data || p.inlineData)
+      : [];
+    if (imgParts.length > 0) {
+      const imgTags = imgParts
+        .map((p, idx) => {
+          const dataObj = p.inline_data || p.inlineData;
+          const mime = dataObj.mime_type || dataObj.mimeType || 'image/jpeg';
+          const data = dataObj.data;
+          return `<img src="data:${mime};base64,${data}" alt="Uploaded Image ${idx + 1}">`;
+        })
+        .join('');
+      imagesHtml = `<div class="user-image-gallery">${imgTags}</div>`;
+    } else if (
+      Array.isArray(msg.imageDataUrls) &&
+      msg.imageDataUrls.length > 0
+    ) {
+      const imgTags = msg.imageDataUrls
+        .map((url, idx) => `<img src="${url}" alt="Uploaded Image ${idx + 1}">`)
+        .join('');
+      imagesHtml = `<div class="user-image-gallery">${imgTags}</div>`;
+    }
+  }
+
   msgDiv.innerHTML = `
         <div class="message-content">
-            ${iconHtml}
-            <div class="text-content">${innerContent}</div>
+          ${imagesHtml}    
+          ${iconHtml}
+          <div class="text-content">${innerContent}</div>
         </div>
         ${footerHtml}
     `;
