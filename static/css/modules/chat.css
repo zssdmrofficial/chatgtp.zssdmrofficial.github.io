@@ -249,8 +249,9 @@
 }
 
 .message-wrapper[data-role="user"] .message-content {
-    justify-content: flex-end;
-    align-items: flex-start;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
 }
 
 .message-wrapper[data-role="user"] .text-content {
@@ -341,6 +342,50 @@
 .image-gallery img:hover {
     transform: scale(1.02);
     box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+}
+
+.user-image-gallery {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 6px 4px 12px 4px;
+    margin: 0 0 4px auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+.user-image-gallery::-webkit-scrollbar {
+    height: 6px;
+}
+
+.user-image-gallery::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.user-image-gallery::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 999px;
+}
+
+.user-image-gallery::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+.user-image-gallery img {
+    flex: 0 0 auto;
+    max-height: 260px;
+    max-width: 100%;
+    width: auto;
+    object-fit: contain;
+    border-radius: 16px;
+    transition: transform 0.2s ease;
+}
+
+.user-image-gallery img:hover {
+    transform: scale(1.02);
 }
 
 .text-content p {

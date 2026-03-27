@@ -844,6 +844,20 @@ async function sendMessage() {
 
   try {
     if (currentUser && activeConvId) {
+      let imageDataUrls = null;
+      if (imageParts.length > 0) {
+        imageDataUrls = [];
+        for (const part of imageParts) {
+          const d = part.inline_data;
+          const srcUrl = `data:${d.mime_type};base64,${d.data}`;
+          try {
+            const thumb = await compressImageToDataUrl(srcUrl, 300, 0.6);
+            imageDataUrls.push(thumb);
+          } catch (_) {}
+        }
+        if (imageDataUrls.length === 0) imageDataUrls = null;
+      }
+      userMsg.imageDataUrls = imageDataUrls;
       const userMsgId = await addMessage(
         activeConvId,
         'user',
@@ -851,6 +865,7 @@ async function sendMessage() {
         text,
         false,
         userParts.filter((p) => p.text !== undefined),
+        imageDataUrls,
       );
       userMsg.messageId = userMsgId;
       await updateConversationTitleIfEmpty(activeConvId, text);
