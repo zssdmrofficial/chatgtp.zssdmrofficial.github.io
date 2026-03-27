@@ -31,6 +31,9 @@ async function handleDeleteAccount() {
       let counter = 0;
 
       for (const msgDoc of messagesSnap.docs) {
+        if (msgDoc.data().hasImages) {
+          await deleteImageChunks(convDoc.id, msgDoc.id);
+        }
         batch.delete(msgDoc.ref);
         counter++;
         if (counter === FIRESTORE_BATCH_LIMIT) {
@@ -42,6 +45,7 @@ async function handleDeleteAccount() {
       if (counter > 0) {
         await batch.commit();
       }
+
       await convRef.delete();
     }
 
@@ -91,6 +95,9 @@ async function deleteConversation(convId) {
     let counter = 0;
 
     for (const msgDoc of messagesSnap.docs) {
+      if (msgDoc.data().hasImages) {
+        await deleteImageChunks(convId, msgDoc.id);
+      }
       batch.delete(msgDoc.ref);
       counter++;
       if (counter === FIRESTORE_BATCH_LIMIT) {
@@ -133,6 +140,10 @@ async function deleteMessagesByIds(convId, messageIds = []) {
 
     for (const id of messageIds) {
       if (!id) continue;
+      const msgEntry = history.find((m) => m.messageId === id);
+      if (!msgEntry || msgEntry.hasImages || msgEntry.imageDataUrls) {
+        await deleteImageChunks(convId, id);
+      }
       batch.delete(messagesRef.doc(id));
       counter++;
       if (counter === FIRESTORE_BATCH_LIMIT) {

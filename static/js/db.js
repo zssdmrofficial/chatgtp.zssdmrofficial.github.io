@@ -101,6 +101,92 @@ async function handleNewChat() {
   await createConversation(DEFAULT_CHAT_TITLE);
 }
 
+const IMAGE_CHUNK_SIZE = 900000;
+
+async function saveImageChunks(convId, msgId, imageDataUrls) {
+  const chunksRef = db
+    .collection('conversations')
+    .doc(convId)
+    .collection('messages')
+    .doc(msgId)
+    .collection('imageChunks');
+  let batch = db.batch();
+  let counter = 0;
+  for (let imgIdx = 0; imgIdx < imageDataUrls.length; imgIdx++) {
+    const dataUrl = imageDataUrls[imgIdx];
+    const totalChunks = Math.ceil(dataUrl.length / IMAGE_CHUNK_SIZE);
+    for (let chunkIdx = 0; chunkIdx < totalChunks; chunkIdx++) {
+      const start = chunkIdx * IMAGE_CHUNK_SIZE;
+      const chunkData = dataUrl.substring(start, start + IMAGE_CHUNK_SIZE);
+      batch.set(chunksRef.doc(`${imgIdx}_${chunkIdx}`), {
+        i: imgIdx,
+        c: chunkIdx,
+        t: totalChunks,
+        d: chunkData,
+      });
+      counter++;
+      if (counter === FIRESTORE_BATCH_LIMIT) {
+        await batch.commit();
+        batch = db.batch();
+        counter = 0;
+      }
+    }
+  }
+  if (counter > 0) {
+    await batch.commit();
+  }
+}
+
+async function loadImageChunks(convId, msgId) {
+  const snap = await db
+    .collection('conversations')
+    .doc(convId)
+    .collection('messages')
+    .doc(msgId)
+    .collection('imageChunks')
+    .get();
+  if (snap.empty) return null;
+  const map = new Map();
+  snap.docs.forEach((doc) => {
+    const d = doc.data();
+    if (!map.has(d.i)) map.set(d.i, []);
+    map.get(d.i).push(d);
+  });
+  const result = [];
+  [...map.keys()]
+    .sort((a, b) => a - b)
+    .forEach((key) => {
+      const chunks = map.get(key).sort((a, b) => a.c - b.c);
+      result.push(chunks.map((ch) => ch.d).join(''));
+    });
+  return result.length > 0 ? result : null;
+}
+
+async function deleteImageChunks(convId, msgId) {
+  const snap = await db
+    .collection('conversations')
+    .doc(convId)
+    .collection('messages')
+    .doc(msgId)
+    .collection('imageChunks')
+    .get();
+  if (snap.empty) return;
+  let batch = db.batch();
+  let counter = 0;
+  for (const doc of snap.docs) {
+    batch.delete(doc.ref);
+    counter++;
+    if (counter === FIRESTORE_BATCH_LIMIT) {
+      await batch.commit();
+      batch = db.batch();
+      counter = 0;
+    }
+  }
+  if (counter > 0) {
+    await batch.commit();
+  }
+}
+
 async function loadMessages(convId) {
   if (!convId) return;
   const user = auth.currentUser;
@@ -129,11 +215,20 @@ async function loadMessages(convId) {
         displayText,
         messageId: d.id,
         isHtml: data.isHtml === true,
-        imageDataUrls: data.imageDataUrls || null,
+        imageDataUrls: null,
+        hasImages: data.hasImages === true,
       };
     });
     currentConversationId = convId;
     renderHistory();
+    const loadPromises = history.map(async (msg) => {
+      if (!msg.hasImages || !msg.messageId) return;
+      const urls = await loadImageChunks(convId, msg.messageId);
+      if (urls) msg.imageDataUrls = urls;
+    });
+    await Promise.all(loadPromises);
+    renderHistory();
+
     await loadConversations(user.uid);
   } catch (e) {
     console.error('載入訊息失敗', e);
@@ -168,9 +263,14 @@ async function addMessage(
       ts: firebase.firestore.FieldValue.serverTimestamp(),
     };
     if (imageDataUrls && imageDataUrls.length > 0) {
-      docData.imageDataUrls = imageDataUrls;
+      docData.hasImages = true;
     }
     const docRef = await messagesRef.add(docData);
+
+    if (imageDataUrls && imageDataUrls.length > 0) {
+      await saveImageChunks(convId, docRef.id, imageDataUrls);
+    }
+
     await db.collection('conversations').doc(convId).update({
       updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
     });

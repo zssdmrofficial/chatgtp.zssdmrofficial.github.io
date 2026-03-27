@@ -1,3 +1,48 @@
+function buildPayloadHistory(systemPrompt) {
+  return [
+    { role: 'user', parts: [{ text: systemPrompt }] },
+    ...history.map((msg) => {
+      const sanitizedParts = msg.parts.map((p) => {
+        if (p.thought) {
+          return { text: `[Thinking]\n${p.thought}` };
+        }
+        if (p.functionCall) {
+          return {
+            text: `[模型嘗試執行代碼]:\n${p.functionCall.args?.code || '(無代碼)'}`,
+          };
+        }
+        if (p.functionResponse) {
+          return {
+            text: `[執行結果回報]:\n${JSON.stringify(p.functionResponse.response?.content || {})}`,
+          };
+        }
+        return p;
+      });
+
+      if (msg.imageDataUrls && msg.imageDataUrls.length > 0) {
+        const hasImages = sanitizedParts.some(
+          (p) => p.inline_data || p.inlineData,
+        );
+        if (!hasImages) {
+          msg.imageDataUrls.forEach((url) => {
+            const match = url.match(/^data:(image\/[^;]+);base64,(.+)$/);
+            if (match) {
+              sanitizedParts.push({
+                inline_data: { mime_type: match[1], data: match[2] },
+              });
+            }
+          });
+        }
+      }
+
+      return {
+        role: msg.role === 'function' ? 'user' : msg.role,
+        parts: sanitizedParts,
+      };
+    }),
+  ];
+}
+
 async function stopGeneration() {
   if (abortController) {
     abortController.abort();
@@ -80,31 +125,7 @@ async function regenerateMessage(modelMessageIndex) {
         finalSystemPrompt += '\n' + SEARCH_SYSTEM_PROMPT_ADDITION;
       }
 
-      let payloadHistory = [
-        { role: 'user', parts: [{ text: finalSystemPrompt }] },
-        ...history.map((msg) => {
-          const sanitizedParts = msg.parts.map((p) => {
-            if (p.thought) {
-              return { text: `[Thinking]\n${p.thought}` };
-            }
-            if (p.functionCall) {
-              return {
-                text: `[模型嘗試執行代碼]:\n${p.functionCall.args?.code || '(無代碼)'}`,
-              };
-            }
-            if (p.functionResponse) {
-              return {
-                text: `[執行結果回報]:\n${JSON.stringify(p.functionResponse.response?.content || {})}`,
-              };
-            }
-            return p;
-          });
-          return {
-            role: msg.role === 'function' ? 'user' : msg.role,
-            parts: sanitizedParts,
-          };
-        }),
-      ];
+      let payloadHistory = buildPayloadHistory(finalSystemPrompt);
 
       const requestBody = { contents: payloadHistory };
       if (currentThinkingLevel) {
@@ -827,11 +848,22 @@ async function sendMessage() {
     userParts.push(...imageParts);
   }
 
+  let imageDataUrls = null;
+  if (imageParts.length > 0) {
+    imageDataUrls = [];
+    for (const part of imageParts) {
+      const d = part.inline_data;
+      const srcUrl = `data:${d.mime_type};base64,${d.data}`;
+      imageDataUrls.push(srcUrl);
+    }
+  }
+
   const userMsg = {
     role: 'user',
     parts: userParts,
     displayText: text,
     messageId: null,
+    imageDataUrls: imageDataUrls,
   };
   history.push(userMsg);
   renderMessage('user', composedText, false, text, history.length - 1);
@@ -844,20 +876,6 @@ async function sendMessage() {
 
   try {
     if (currentUser && activeConvId) {
-      let imageDataUrls = null;
-      if (imageParts.length > 0) {
-        imageDataUrls = [];
-        for (const part of imageParts) {
-          const d = part.inline_data;
-          const srcUrl = `data:${d.mime_type};base64,${d.data}`;
-          try {
-            const thumb = await compressImageToDataUrl(srcUrl, 300, 0.6);
-            imageDataUrls.push(thumb);
-          } catch (_) {}
-        }
-        if (imageDataUrls.length === 0) imageDataUrls = null;
-      }
-      userMsg.imageDataUrls = imageDataUrls;
       const userMsgId = await addMessage(
         activeConvId,
         'user',
@@ -885,29 +903,7 @@ async function sendMessage() {
         finalSystemPrompt += '\n' + SEARCH_SYSTEM_PROMPT_ADDITION;
       }
 
-      let payloadHistory = [
-        { role: 'user', parts: [{ text: finalSystemPrompt }] },
-        ...history.map((msg) => {
-          const sanitizedParts = msg.parts.map((p) => {
-            if (p.functionCall) {
-              return {
-                text: `[模型嘗試執行代碼]:\n${p.functionCall.args?.code || '(無代碼)'}`,
-              };
-            }
-            if (p.functionResponse) {
-              return {
-                text: `[執行結果回報]:\n${JSON.stringify(p.functionResponse.response?.content || {})}`,
-              };
-            }
-            return p;
-          });
-
-          return {
-            role: msg.role === 'function' ? 'user' : msg.role,
-            parts: sanitizedParts,
-          };
-        }),
-      ];
+      let payloadHistory = buildPayloadHistory(finalSystemPrompt);
 
       const requestBody = { contents: payloadHistory };
       if (currentThinkingLevel) {
