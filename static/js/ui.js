@@ -571,7 +571,7 @@ function updateAuthUI(user) {
 function clearChatUI() {
   chatBoxEl.innerHTML = '';
   history = [];
-  setPendingImage(null);
+  clearPendingImages();
 }
 
 function updateTempChatBtnUI() {
