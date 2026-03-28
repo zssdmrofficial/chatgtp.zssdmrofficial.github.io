@@ -37,6 +37,138 @@ function scheduleBubbleShapeRefresh() {
 
 window.addEventListener('resize', scheduleBubbleShapeRefresh);
 
+function getImageExtensionFromMime(mime) {
+  if (!mime || typeof mime !== 'string') return 'png';
+  const normalized = mime.toLowerCase();
+  if (normalized === 'image/jpeg') return 'jpg';
+  if (normalized === 'image/svg+xml') return 'svg';
+  const match = normalized.match(/^image\/([a-z0-9.+-]+)$/);
+  if (match) return match[1].split('+')[0];
+  return 'png';
+}
+
+function getImageExtensionFromUrl(url) {
+  if (typeof url !== 'string') return 'png';
+  const dataMatch = url.match(/^data:image\/([a-z0-9.+-]+);/i);
+  if (dataMatch) {
+    return getImageExtensionFromMime(`image/${dataMatch[1]}`);
+  }
+  const base = url.split('?')[0].split('#')[0];
+  const extMatch = base.match(/\.([a-z0-9]+)$/i);
+  if (extMatch) return extMatch[1].toLowerCase();
+  return 'png';
+}
+
+window.checkImageBtnBrightness = function (imgEl) {
+  try {
+    const container = imgEl.closest('.image-preview');
+    if (!container) return;
+    const btn = container.querySelector('.image-download-btn');
+    if (!btn) return;
+
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    if (!ctx) return;
+
+    const displayW = imgEl.clientWidth;
+    const displayH = imgEl.clientHeight;
+
+    if (displayW === 0 || displayH === 0) return;
+
+    const natW = imgEl.naturalWidth;
+    const natH = imgEl.naturalHeight;
+    if (natW === 0 || natH === 0) return;
+
+    const ratioX = natW / displayW;
+    const ratioY = natH / displayH;
+
+    // 按鈕寬高與位置設定
+    const btnW = 28;
+    const btnH = 28;
+    const rightOffset = 8;
+    const bottomOffset = 8;
+
+    let srcX = (displayW - rightOffset - btnW) * ratioX;
+    let srcY = (displayH - bottomOffset - btnH) * ratioY;
+    let srcW = btnW * ratioX;
+    let srcH = btnH * ratioY;
+
+    // 防止超出邊界
+    srcX = Math.max(0, srcX);
+    srcY = Math.max(0, srcY);
+    srcW = Math.min(natW - srcX, srcW);
+    srcH = Math.min(natH - srcY, srcH);
+
+    if (srcW <= 0 || srcH <= 0) return;
+
+    canvas.width = btnW;
+    canvas.height = btnH;
+
+    ctx.drawImage(imgEl, srcX, srcY, srcW, srcH, 0, 0, btnW, btnH);
+
+    const imgData = ctx.getImageData(0, 0, btnW, btnH);
+    const data = imgData.data;
+
+    let r = 0,
+      g = 0,
+      b = 0,
+      count = 0;
+
+    for (let i = 0; i < data.length; i += 16) {
+      if (data[i + 3] > 0) {
+        r += data[i];
+        g += data[i + 1];
+        b += data[i + 2];
+        count++;
+      }
+    }
+
+    if (count > 0) {
+      r /= count;
+      g /= count;
+      b /= count;
+    } else {
+      return;
+    }
+
+    // 計算亮度 (YIQ formula)
+    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+
+    // 如果圖片在該區域較暗，圖示設為白色；若較亮則設為黑色
+    if (brightness < 128) {
+      btn.style.setProperty('--dyn-icon-color', '#ffffff');
+    } else {
+      btn.style.setProperty('--dyn-icon-color', '#000000');
+    }
+  } catch (e) {
+    console.warn(
+      'Failed to detect brightness (might be CORS), fallback to default:',
+      e,
+    );
+  }
+};
+
+function buildDownloadableImageHtml(src, alt, downloadName) {
+  const safeAlt = alt || 'Image preview';
+  const safeDownloadName =
+    typeof downloadName === 'string'
+      ? downloadName.replace(/"/g, '').trim()
+      : '';
+  const downloadAttr = safeDownloadName
+    ? ` download="${safeDownloadName}"`
+    : '';
+  const iconMarkup = DOWNLOAD_ICON.replace(
+    'margin-right:4px;',
+    'margin-right:0;',
+  );
+  return `<div class="image-preview">
+    <img src="${src}" alt="${safeAlt}" crossorigin="anonymous" onload="checkImageBtnBrightness(this)">
+    <a class="image-download-btn" href="${src}"${downloadAttr} aria-label="下載圖片" title="下載圖片">
+      ${iconMarkup}
+    </a>
+  </div>`;
+}
+
 function renderMessage(
   role,
   content,
@@ -143,7 +275,15 @@ function renderMessage(
         : null;
     if (displayUrls) {
       const imgTags = displayUrls
-        .map((url, idx) => `<img src="${url}" alt="Uploaded Image ${idx + 1}">`)
+        .map((url, idx) => {
+          const ext = getImageExtensionFromUrl(url);
+          const downloadName = `user-image-${idx + 1}.${ext}`;
+          return buildDownloadableImageHtml(
+            url,
+            `Uploaded Image ${idx + 1}`,
+            downloadName,
+          );
+        })
         .join('');
       imagesHtml = `<div class="user-image-gallery">${imgTags}</div>`;
     } else {
@@ -156,7 +296,14 @@ function renderMessage(
             const dataObj = p.inline_data || p.inlineData;
             const mime = dataObj.mime_type || dataObj.mimeType || 'image/jpeg';
             const data = dataObj.data;
-            return `<img src="data:${mime};base64,${data}" alt="Uploaded Image ${idx + 1}">`;
+            const src = `data:${mime};base64,${data}`;
+            const ext = getImageExtensionFromMime(mime);
+            const downloadName = `user-image-${idx + 1}.${ext}`;
+            return buildDownloadableImageHtml(
+              src,
+              `Uploaded Image ${idx + 1}`,
+              downloadName,
+            );
           })
           .join('');
         imagesHtml = `<div class="user-image-gallery">${imgTags}</div>`;

@@ -452,10 +452,20 @@ async function regenerateMessage(modelMessageIndex) {
               )
               .join('\n');
           const imgTags = resultImages
-            .map(
-              (img) =>
-                `<img src="data:${img.type};base64,${img.data}" alt="Plot">`,
-            )
+            .map((img, idx) => {
+              const mime = img.type || 'image/png';
+              const src = `data:${mime};base64,${img.data}`;
+              const fallbackName = `python-output-${idx + 1}.${getImageExtensionFromMime(mime)}`;
+              const downloadName =
+                typeof img.name === 'string' && img.name.trim()
+                  ? img.name.trim()
+                  : fallbackName;
+              return buildDownloadableImageHtml(
+                src,
+                img.name || 'Python Output',
+                downloadName,
+              );
+            })
             .join('');
           outputDisplay += `\n\n<div class="image-gallery">${imgTags}</div>`;
         }
@@ -471,7 +481,7 @@ async function regenerateMessage(modelMessageIndex) {
           const fileHtml = resultFiles
             .map(
               (file) =>
-                `<div style="margin-top:8px;"><a href="data:${file.type};base64,${file.data}" download="${file.name}" style="text-decoration:none; color:var(--accent-strong); display:inline-flex; align-items:center; gap:6px; padding:10px 14px; border:1px solid var(--accent-strong); border-radius:8px; transition:all 0.2s; background:rgba(255,255,255,0.02);">${DOWNLOAD_FILE_ICON} 下載檔案：${file.name}</a></div>`,
+                `<div style="margin-top:8px;"><a href="data:${file.type};base64,${file.data}" download="${file.name}" style="text-decoration:none; color:var(--accent-strong); display:inline-flex; align-items:center; gap:6px; padding:10px 14px; border:1px solid var(--accent-strong); border-radius:8px; transition:all 0.2s; background:rgba(255,255,255,0.02);">${DOWNLOAD_ICON} 下載檔案：${file.name}</a></div>`,
             )
             .join('');
           outputDisplay += `\n\n**產生的檔案:**\n${fileHtml}`;
@@ -1232,10 +1242,20 @@ async function sendMessage() {
               )
               .join('\n');
           const imgTags = resultImages
-            .map(
-              (img) =>
-                `<img src="data:${img.type};base64,${img.data}" alt="Plot">`,
-            )
+            .map((img, idx) => {
+              const mime = img.type || 'image/png';
+              const src = `data:${mime};base64,${img.data}`;
+              const fallbackName = `python-output-${idx + 1}.${getImageExtensionFromMime(mime)}`;
+              const downloadName =
+                typeof img.name === 'string' && img.name.trim()
+                  ? img.name.trim()
+                  : fallbackName;
+              return buildDownloadableImageHtml(
+                src,
+                img.name || 'Python Output',
+                downloadName,
+              );
+            })
             .join('');
           outputDisplay += `\n\n<div class="image-gallery">${imgTags}</div>`;
         }
@@ -1252,7 +1272,7 @@ async function sendMessage() {
           const fileHtml = resultFiles
             .map(
               (file) =>
-                `<div style="margin-top:8px;"><a href="data:${file.type};base64,${file.data}" download="${file.name}" style="text-decoration:none; color:var(--accent-strong); display:inline-flex; align-items:center; gap:6px; padding:10px 14px; border:1px solid var(--accent-strong); border-radius:8px; transition:all 0.2s; background:rgba(255,255,255,0.02);">${DOWNLOAD_FILE_ICON}${file.name}</a></div>`,
+                `<div style="margin-top:8px;"><a href="data:${file.type};base64,${file.data}" download="${file.name}" style="text-decoration:none; color:var(--accent-strong); display:inline-flex; align-items:center; gap:6px; padding:10px 14px; border:1px solid var(--accent-strong); border-radius:8px; transition:all 0.2s; background:rgba(255,255,255,0.02);">${DOWNLOAD_ICON}${file.name}</a></div>`,
             )
             .join('');
           outputDisplay += `\n\n**產生的檔案:**\n${fileHtml}`;
