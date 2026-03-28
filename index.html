@@ -1,140 +1,229 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>張師社會主義民主共和國 - AI不花錢，努力搞科研</title>
+    <link rel="icon" href="/static/images/favicon.ico" type="image/x-icon" />
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>張師社會主義民主共和國 - AI不花錢，努力搞科研</title>
-  <link rel="icon" href="/static/images/favicon.ico" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
-    rel="stylesheet">
+    <link
+      rel="stylesheet"
+      href="static/vendor/highlightjs/atom-one-dark.min.css"
+    />
+    <link rel="stylesheet" href="static/vendor/katex/katex.min.css" />
+    <link rel="stylesheet" href="static/css/style.css" />
+  </head>
 
-  <link rel="stylesheet" href="static/vendor/highlightjs/atom-one-dark.min.css">
-  <link rel="stylesheet" href="static/vendor/katex/katex.min.css">
-  <link rel="stylesheet" href="static/css/style.css">
-</head>
-
-<body>
-  <div class="full-bg"><img src="/static/images/background.png"></div>
-  <div class="app-container">
-    <aside class="sidebar">
-      <div style="display: flex; gap: 8px; align-items: center;">
-        <div class="new-chat-btn" id="new-chat-btn" style="flex-grow: 1;">
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9.335 16.5v-5.835H3.5a.665.665 0 1 1 0-1.33h5.835V3.5a.665.665 0 0 1 1.33 0v5.835H16.5l.134.014a.665.665 0 0 1 0 1.302l-.134.014h-5.835V16.5a.665.665 0 1 1-1.33 0" fill="currentColor"/></svg>
-          New chat
+  <body>
+    <div class="full-bg"><img src="/static/images/background.png" /></div>
+    <div class="app-container">
+      <aside class="sidebar">
+        <div style="display: flex; gap: 8px; align-items: center">
+          <div class="new-chat-btn" id="new-chat-btn" style="flex-grow: 1">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 20 20"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M9.335 16.5v-5.835H3.5a.665.665 0 1 1 0-1.33h5.835V3.5a.665.665 0 0 1 1.33 0v5.835H16.5l.134.014a.665.665 0 0 1 0 1.302l-.134.014h-5.835V16.5a.665.665 0 1 1-1.33 0"
+                fill="currentColor"
+              />
+            </svg>
+            New chat
+          </div>
+          <button
+            id="temp-chat-btn"
+            class="icon-btn temp-chat-btn"
+            title="臨時對話模式"
+            style="
+              border-radius: 50%;
+              width: 40px;
+              height: 40px;
+              padding: 0;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              background-color: rgba(255, 255, 255, 0.03);
+              border: 1px solid var(--glass-border);
+              color: var(--text-primary);
+              cursor: pointer;
+              transition: all 0.3s ease;
+              flex-shrink: 0;
+              margin-top: 0;
+            "
+          ></button>
         </div>
-        <button id="temp-chat-btn" class="icon-btn temp-chat-btn" title="臨時對話模式" style="border-radius: 50%; width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center; background-color: rgba(255, 255, 255, 0.03); border: 1px solid var(--glass-border); color: var(--text-primary); cursor: pointer; transition: all 0.3s ease; flex-shrink: 0; margin-top: 0;">
-        </button>
-      </div>
-      <div class="history-list" id="conversation-list">
-        <div class="history-empty">登入後會顯示您的對話</div>
-      </div>
-      <div class="sidebar-footer">
-        <div class="user-profile" id="user-profile">
-          <div class="avatar" id="user-avatar">G</div>
-          <div class="username" id="user-name">Guest</div>
+        <div class="history-list" id="conversation-list">
+          <div class="history-empty">登入後會顯示您的對話</div>
         </div>
-        <div class="auth-card">
-          <div id="auth-hint" class="auth-hint">尚未登入</div>
-          <div class="auth-actions">
-            <a id="login-page-btn" class="primary-btn" href="login.html">前往登入/註冊</a>
-            <button id="logout-btn" class="ghost-btn">登出</button>
+        <div class="sidebar-footer">
+          <div class="user-profile" id="user-profile">
+            <div class="avatar" id="user-avatar">G</div>
+            <div class="username" id="user-name">Guest</div>
+          </div>
+          <div class="auth-card">
+            <div id="auth-hint" class="auth-hint">尚未登入</div>
+            <div class="auth-actions">
+              <a id="login-page-btn" class="primary-btn" href="login.html"
+                >前往登入/註冊</a
+              >
+              <button id="logout-btn" class="ghost-btn">登出</button>
+            </div>
           </div>
         </div>
-      </div>
-    </aside>
+      </aside>
 
-    <main class="chat-interface">
-      <div id="temp-chat-banner" class="temp-chat-banner" style="display: none; background-color: rgba(255, 255, 255, 0.05); color: var(--text-secondary); text-align: center; padding: 8px; font-weight: 500; border-bottom: 1px solid var(--glass-border); font-size: 13px; z-index: 100; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);">臨時對話模式</div>
-      <div class="mobile-header">
-        <button id="mobile-menu-btn" aria-label="切換選單">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M4 6H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-            <path d="M4 12H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-            <path d="M4 18H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-          </svg>
-        </button>
-
-      </div>
-
-      <div id="chat-box" class="chat-container">
-      </div>
-
-      <div class="input-container">
-        <div class="input-wrapper">
-          <div id="image-preview-container" class="image-preview-container" style="display: none;"></div>
-          <div class="input-main">
-            <button id="attach-photo-button" class="attach-photo-btn" type="button" title="上傳圖片" aria-label="上傳圖片"></button>
-            <input id="attach-photo-input" type="file" multiple hidden>
-            <textarea id="user-input" placeholder="跟AI聊聊..." rows="1"></textarea>
-            <button id="send-button" disabled>
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M7 11L12 6L17 11M12 18V7" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                  stroke-linejoin="round" />
-              </svg>
-            </button>
-          </div>
-          <div class="prompt-tools-block" id="prompt-tools-block">
-            <div class="prompt-tools-list" id="prompt-tools"></div>
-          </div>
+      <main class="chat-interface">
+        <div
+          id="temp-chat-banner"
+          class="temp-chat-banner"
+          style="
+            display: none;
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            text-align: center;
+            padding: 8px;
+            font-weight: 500;
+            border-bottom: 1px solid var(--glass-border);
+            font-size: 13px;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+          "
+        >
+          臨時對話模式
         </div>
-        <div class="disclaimer">
-          AI有時可能會出錯。
+        <div class="mobile-header">
+          <button id="mobile-menu-btn" aria-label="切換選單">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M4 6H20"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+              <path
+                d="M4 12H20"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+              <path
+                d="M4 18H20"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+            </svg>
+          </button>
         </div>
-        <div class="input-bg-footer"></div>
-      </div>
-    </main>
-  </div>
 
-  <div class="mobile-backdrop" id="mobile-backdrop"></div>
+        <div id="chat-box" class="chat-container"></div>
 
-  <script src="static/vendor/katex/katex.min.js"></script>
-  <script src="static/vendor/marked/marked.min.js"></script>
-  <script src="static/vendor/highlightjs/highlight.min.js"></script>
-  <script src="static/vendor/jszip/jszip.min.js"></script>
+        <div class="input-container">
+          <div class="input-wrapper">
+            <div
+              id="image-preview-container"
+              class="image-preview-container"
+              style="display: none"
+            ></div>
+            <div class="input-main">
+              <button
+                id="attach-photo-button"
+                class="attach-photo-btn"
+                type="button"
+                title="上傳圖片"
+                aria-label="上傳圖片"
+              ></button>
+              <input id="attach-photo-input" type="file" multiple hidden />
+              <textarea
+                id="user-input"
+                placeholder="跟AI聊聊..."
+                rows="1"
+              ></textarea>
+              <button id="send-button" disabled>
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M7 11L12 6L17 11M12 18V7"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </button>
+            </div>
+            <div class="prompt-tools-block" id="prompt-tools-block">
+              <div class="prompt-tools-list" id="prompt-tools"></div>
+            </div>
+          </div>
+          <div class="disclaimer">AI有時可能會出錯。</div>
+          <div class="input-bg-footer"></div>
+        </div>
+      </main>
+    </div>
 
-  <script src="static/vendor/firebase/firebase-app-compat.js"></script>
-  <script src="static/vendor/firebase/firebase-auth-compat.js"></script>
-  <script src="static/vendor/firebase/firebase-firestore-compat.js"></script>
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyAuSdCDN0Duq8xYhisXZ14spunQAOG2464",
-      authDomain: "chatgtpzssdmrofficialgithubio.firebaseapp.com",
-      projectId: "chatgtpzssdmrofficialgithubio",
-      storageBucket: "chatgtpzssdmrofficialgithubio.firebasestorage.app",
-      messagingSenderId: "514071826833",
-      appId: "1:514071826833:web:144f93181bff6d1d8f4a30",
-      measurementId: "G-FCZ0X6BPM9"
-    };
-    try {
-      firebase.initializeApp(firebaseConfig);
-    } catch (e) {
-      console.error("Firebase 初始化失敗，請確認設定是否已填寫。", e);
-    }
-  </script>
-  <script src="static/js/svg-icons.js"></script>
-  <script src="static/js/constants.js"></script>
-  <script src="static/js/system-instruction.js"></script>
-  <script src="static/js/firebase-init.js"></script>
-  <script src="static/js/state.js"></script>
-  <script src="static/js/utils.js"></script>
-  <script src="static/js/dom-elements.js"></script>
-  <script src="static/js/prompt-tools.js"></script>
-  <script src="static/js/ui.js"></script>
-  <script src="static/js/chat-ui.js"></script>
-  <script src="static/js/db.js"></script>
-  <script src="static/js/modals.js"></script>
-  <script src="static/js/auth-db-actions.js"></script>
-  <script src="static/js/auth-observer.js"></script>
-  <script src="static/js/api-utils.js"></script>
-  <script src="static/js/search-utils.js"></script>
-  <script src="static/js/chat-api.js"></script>
-  <script src="static/js/events.js"></script>
+    <div class="mobile-backdrop" id="mobile-backdrop"></div>
 
-</body>
+    <script src="static/vendor/katex/katex.min.js"></script>
+    <script src="static/vendor/marked/marked.min.js"></script>
+    <script src="static/vendor/highlightjs/highlight.min.js"></script>
+    <script src="static/vendor/jszip/jszip.min.js"></script>
 
+    <script src="static/vendor/firebase/firebase-app-compat.js"></script>
+    <script src="static/vendor/firebase/firebase-auth-compat.js"></script>
+    <script src="static/vendor/firebase/firebase-firestore-compat.js"></script>
+    <script>
+      const firebaseConfig = {
+        apiKey: 'AIzaSyAuSdCDN0Duq8xYhisXZ14spunQAOG2464',
+        authDomain: 'chatgtpzssdmrofficialgithubio.firebaseapp.com',
+        projectId: 'chatgtpzssdmrofficialgithubio',
+        storageBucket: 'chatgtpzssdmrofficialgithubio.firebasestorage.app',
+        messagingSenderId: '514071826833',
+        appId: '1:514071826833:web:144f93181bff6d1d8f4a30',
+        measurementId: 'G-FCZ0X6BPM9',
+      };
+      try {
+        firebase.initializeApp(firebaseConfig);
+      } catch (e) {
+        console.error('Firebase 初始化失敗，請確認設定是否已填寫。', e);
+      }
+    </script>
+    <script src="static/js/svg-icons.js"></script>
+    <script src="static/js/constants.js"></script>
+    <script src="static/js/system-instruction.js"></script>
+    <script src="static/js/firebase-init.js"></script>
+    <script src="static/js/state.js"></script>
+    <script src="static/js/utils.js"></script>
+    <script src="static/js/dom-elements.js"></script>
+    <script src="static/js/prompt-tools.js"></script>
+    <script src="static/js/ui.js"></script>
+    <script src="static/js/chat-ui.js"></script>
+    <script src="static/js/db.js"></script>
+    <script src="static/js/modals.js"></script>
+    <script src="static/js/auth-db-actions.js"></script>
+    <script src="static/js/auth-observer.js"></script>
+    <script src="static/js/api-utils.js"></script>
+    <script src="static/js/search-utils.js"></script>
+    <script src="static/js/chat-api.js"></script>
+    <script src="static/js/events.js"></script>
+  </body>
 </html>

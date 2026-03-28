@@ -1,196 +1,195 @@
 .mobile-backdrop {
-    display: none;
+  display: none;
 }
 
 @media (max-width: 768px) {
-    .sidebar {
-        position: fixed;
-        inset: 0 auto 0 0;
-        width: 85%;
-        max-width: 320px;
-        display: none;
-        z-index: 200;
-        background-color: var(--sidebar-bg);
-        backdrop-filter: blur(20px) saturate(180%);
-        -webkit-backdrop-filter: blur(20px) saturate(180%);
-        box-shadow: 10px 0 40px rgba(0, 0, 0, 0.5);
-        border-right: 1px solid var(--glass-border);
-    }
+  .sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: 85%;
+    max-width: 320px;
+    display: none;
+    z-index: 200;
+    background-color: var(--sidebar-bg);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    box-shadow: 10px 0 40px rgba(0, 0, 0, 0.5);
+    border-right: 1px solid var(--glass-border);
+  }
 
-    .mobile-header {
-        display: flex;
-    }
+  .mobile-header {
+    display: flex;
+  }
 
-    .message-content,
-    .message-footer,
-    .input-wrapper {
-        padding: 0 16px;
-    }
+  .message-content,
+  .message-footer,
+  .input-wrapper {
+    padding: 0 16px;
+  }
 
-    .input-container {
-        padding: 0 12px max(8px, env(safe-area-inset-bottom));
-    }
+  .input-container {
+    padding: 0 12px max(8px, env(safe-area-inset-bottom));
+  }
 
-    .input-wrapper {
-        padding: 8px 12px;
-        min-height: 40px;
-        gap: 8px;
-        border-radius: 20px;
-    }
+  .input-wrapper {
+    padding: 8px 12px;
+    min-height: 40px;
+    gap: 8px;
+    border-radius: 20px;
+  }
 
-    .prompt-tools-block {
-        padding: 6px 0 0;
-        margin-top: 0;
-    }
+  .prompt-tools-block {
+    padding: 6px 0 0;
+    margin-top: 0;
+  }
 
-    .prompt-tools-list {
-        gap: 8px;
-        min-height: auto;
-    }
+  .prompt-tools-list {
+    gap: 8px;
+    min-height: auto;
+  }
 
-    .tool-pill {
-        padding: 4px 10px;
-        font-size: 13px;
-    }
+  .tool-pill {
+    padding: 4px 10px;
+    font-size: 13px;
+  }
 
-    .thinking-dropdown,
-    .prompt-dropdown {
-        min-width: 160px;
-        bottom: calc(100% + 4px);
-    }
+  .thinking-dropdown,
+  .prompt-dropdown {
+    min-width: 160px;
+    bottom: calc(100% + 4px);
+  }
 
-    textarea {
-        font-size: 15px;
-        padding: 2px 0;
-    }
+  textarea {
+    font-size: 15px;
+    padding: 2px 0;
+  }
 
+  body.sidebar-open .sidebar {
+    display: flex;
+    animation: fadeIn 0.2s ease-out;
+  }
 
-    body.sidebar-open .sidebar {
-        display: flex;
-        animation: fadeIn 0.2s ease-out;
-    }
+  .mobile-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: transparent;
+    backdrop-filter: none;
+    z-index: 150;
+  }
 
-    .mobile-backdrop {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: transparent;
-        backdrop-filter: none;
-        z-index: 150;
-    }
+  body.sidebar-open .mobile-backdrop {
+    display: block;
+    animation: fadeIn 0.3s ease;
+  }
 
-    body.sidebar-open .mobile-backdrop {
-        display: block;
-        animation: fadeIn 0.3s ease;
-    }
+  .python-analysis-indicator {
+    max-width: 100%;
+    overflow: hidden;
+  }
 
-    .python-analysis-indicator {
-        max-width: 100%;
-        overflow: hidden;
-    }
+  .python-analysis-header {
+    flex-wrap: wrap;
+    row-gap: 6px;
+    min-width: 0;
+  }
 
-    .python-analysis-header {
-        flex-wrap: wrap;
-        row-gap: 6px;
-        min-width: 0;
-    }
+  .python-analysis-header .status-text {
+    min-width: 0;
+    flex: 1 1 auto;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
 
-    .python-analysis-header .status-text {
-        min-width: 0;
-        flex: 1 1 auto;
-        white-space: normal;
-        overflow-wrap: anywhere;
-        word-break: break-word;
-    }
+  .python-analysis-indicator img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
 
-    .python-analysis-indicator img {
-        max-width: 100%;
-        height: auto;
-        display: block;
-    }
+  .python-analysis-code {
+    max-width: 100%;
+    overflow: hidden;
+  }
 
-    .python-analysis-code {
-        max-width: 100%;
-        overflow: hidden;
-    }
+  .python-analysis-code .code-container {
+    max-width: 100%;
+    overflow: hidden;
+  }
 
-    .python-analysis-code .code-container {
-        max-width: 100%;
-        overflow: hidden;
-    }
+  .python-analysis-code pre {
+    max-width: 100%;
+    overflow-x: auto;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
 
-    .python-analysis-code pre {
-        max-width: 100%;
-        overflow-x: auto;
-        word-wrap: break-word;
-        white-space: pre-wrap;
-        overflow-wrap: anywhere;
-        word-break: break-word;
-    }
+  .python-analysis-code code {
+    max-width: 100%;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
 
-    .python-analysis-code code {
-        max-width: 100%;
-        word-wrap: break-word;
-        white-space: pre-wrap;
-        overflow-wrap: anywhere;
-        word-break: break-word;
-    }
+  .text-content {
+    max-width: 100%;
+    overflow-y: hidden;
+    overflow-x: hidden;
+  }
 
-    .text-content {
-        max-width: 100%;
-        overflow-y: hidden;
-        overflow-x: hidden;
-    }
+  .text-content .image-gallery {
+    overflow-x: auto;
+  }
 
-    .text-content .image-gallery {
-        overflow-x: auto;
-    }
+  .image-gallery img {
+    max-height: 280px;
+  }
 
-    .image-gallery img {
-        max-height: 280px;
-    }
+  .text-content img {
+    max-width: 100%;
+    height: auto;
+  }
 
-    .text-content img {
-        max-width: 100%;
-        height: auto;
-    }
+  .text-content .code-container {
+    max-width: 100%;
+    overflow: hidden;
+  }
 
-    .text-content .code-container {
-        max-width: 100%;
-        overflow: hidden;
-    }
+  .text-content pre {
+    max-width: 100%;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
 
-    .text-content pre {
-        max-width: 100%;
-        overflow-x: auto;
-        white-space: pre-wrap;
-        overflow-wrap: anywhere;
-        word-break: break-word;
-    }
+  .text-content code {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
 
-    .text-content code {
-        white-space: pre-wrap;
-        overflow-wrap: anywhere;
-        word-break: break-word;
-    }
+  .code-header {
+    flex-wrap: wrap;
+    row-gap: 6px;
+    min-width: 0;
+  }
 
-    .code-header {
-        flex-wrap: wrap;
-        row-gap: 6px;
-        min-width: 0;
-    }
+  .settings-sidebar {
+    width: 100px;
+    padding: 8px;
+  }
 
-    .settings-sidebar {
-        width: 100px;
-        padding: 8px;
-    }
+  .settings-tab {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
 
-    .settings-tab {
-        padding: 8px 10px;
-        font-size: 13px;
-    }
-
-    .settings-content {
-        padding: 16px;
-    }
+  .settings-content {
+    padding: 16px;
+  }
 }
