@@ -331,12 +331,13 @@
     max-width: none;
     margin: 0;
     border-radius: 10px;
+    box-shadow: none;
     scroll-snap-align: start;
     transition: transform 0.2s ease;
 }
 
 .image-gallery img:hover {
-    transform: scale(1.02);
+    transform: scale(1.01);
 }
 
 .user-image-gallery {
@@ -371,7 +372,7 @@
 
 .user-image-gallery img {
     flex: 0 0 auto;
-    max-height: 260px;
+    max-height: 130px;
     max-width: 100%;
     width: auto;
     object-fit: contain;
