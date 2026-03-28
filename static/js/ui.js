@@ -85,11 +85,13 @@ function addPendingImages(files) {
 
 function renderPendingImages() {
   if (!imagePreviewContainer) return;
+  const shouldStickToBottom = isChatNearBottom();
   imagePreviewContainer.innerHTML = '';
 
   if (pendingImageFiles.length === 0) {
     imagePreviewContainer.style.display = 'none';
     if (attachPhotoInput) attachPhotoInput.value = '';
+    adjustChatPadding(shouldStickToBottom);
     return;
   }
 
@@ -127,6 +129,7 @@ function renderPendingImages() {
     wrapper.appendChild(removeBtn);
     imagePreviewContainer.appendChild(wrapper);
   });
+  adjustChatPadding(shouldStickToBottom);
 }
 
 function compressImageToDataUrl(srcDataUrl, maxDim, quality) {
@@ -406,13 +409,20 @@ function updateSendButtonState() {
   }
   updateSearchPillState();
   updateAttachPhotoButtonState();
-  adjustChatPadding();
 }
 
-function adjustChatPadding() {
-  if (chatBoxEl) {
-    chatBoxEl.style.paddingBottom = '';
-  }
+function isChatNearBottom(threshold = 8) {
+  if (!chatBoxEl) return false;
+  const distance =
+    chatBoxEl.scrollHeight - chatBoxEl.scrollTop - chatBoxEl.clientHeight;
+  return distance <= threshold;
+}
+
+function adjustChatPadding(shouldStickToBottom = false) {
+  if (!chatBoxEl || !shouldStickToBottom) return;
+  requestAnimationFrame(() => {
+    chatBoxEl.scrollTop = chatBoxEl.scrollHeight;
+  });
 }
 
 function isConversationActionLocked() {

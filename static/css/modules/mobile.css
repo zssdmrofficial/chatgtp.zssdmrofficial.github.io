@@ -28,8 +28,7 @@
     }
 
     .input-container {
-        padding: 8px 12px max(8px, env(safe-area-inset-bottom));
-        --input-fade-height: 32px;
+        padding: 0 12px max(8px, env(safe-area-inset-bottom));
     }
 
     .input-wrapper {
