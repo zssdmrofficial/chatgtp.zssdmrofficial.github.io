@@ -189,9 +189,9 @@ textarea::placeholder {
 }
 
 .attach-photo-btn.is-selected {
-    color: var(--accent-strong);
-    border-color: color-mix(in srgb, var(--accent-color) 55%, white 10%);
-    box-shadow: 0 0 12px var(--accent-glow);
+    color: var(--text-secondary);
+    border-color: var(--glass-border);
+    box-shadow: none;
 }
 
 .attach-photo-btn:disabled {
