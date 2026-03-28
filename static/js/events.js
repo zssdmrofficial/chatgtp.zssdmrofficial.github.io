@@ -10,10 +10,11 @@ inputEl.addEventListener('keydown', (e) => {
 });
 
 inputEl.addEventListener('input', function () {
+  const shouldStickToBottom = isChatNearBottom();
   this.style.height = 'auto';
   this.style.height = this.scrollHeight + 'px';
   updateSendButtonState();
-  adjustChatPadding();
+  adjustChatPadding(shouldStickToBottom);
 });
 
 document.addEventListener('DOMContentLoaded', async () => {

@@ -95,7 +95,7 @@
 .chat-container {
     flex: 1;
     overflow-y: auto;
-    padding: 24px 0 32px;
+    padding: 24px 0 0;
     scroll-behavior: smooth;
     min-height: 0;
 }
@@ -221,7 +221,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .message-content:has(.python-analysis-indicator) .role-icon,
@@ -237,7 +236,6 @@
 .icon-model {
     background: var(--accent-strong);
     color: #1a1a1a;
-    box-shadow: 0 0 10px var(--accent-glow);
     margin-top: calc((1.7em - 32px) / 2);
 }
 
@@ -263,7 +261,6 @@
     border-radius: 24px;
     transition: border-radius 0.2s ease;
     max-width: min(75%, 480px);
-    box-shadow: 0 8px 24px color-mix(in srgb, var(--accent-color) 40%, transparent);
     border: 1px solid rgba(255, 255, 255, 0.14);
     font-weight: 600;
     line-height: 1.6;
