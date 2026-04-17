@@ -1,6 +1,4 @@
 const SEARCH_TIMEOUT_MS = 30000;
-const SEARCH_RESULTS_LIMIT = 6;
-const SNIPPET_LIMIT = 180;
 
 async function fetchWithTimeout(
   url,
@@ -25,7 +23,7 @@ async function fetchWithTimeout(
 }
 
 async function runSearch(query) {
-  const proxyUrl = SEARXNG_PROXY_URL + '?q=' + encodeURIComponent(query);
+  const proxyUrl = SEARCH_PROXY_URL + '?q=' + encodeURIComponent(query);
   const options = {
     method: 'GET',
     headers: {
@@ -35,26 +33,19 @@ async function runSearch(query) {
 
   const res = await fetchWithTimeout(proxyUrl, options);
   if (!res.ok) {
-    throw new Error(`SearXNG HTTP 錯誤: ${res.status}`);
+    throw new Error(`Tavily 搜尋 Proxy HTTP 錯誤: ${res.status}`);
   }
 
   const data = await res.json();
   const rawResults = data.results || [];
   const results = [];
-
   for (let i = 0; i < rawResults.length; i++) {
-    if (results.length >= SEARCH_RESULTS_LIMIT) break;
-
     const item = rawResults[i];
     const title = (item.title || '').trim();
     const url = (item.url || '').trim();
-    let snippet = (item.content || '').trim();
+    const snippet = (item.content || '').trim();
 
     if (!title || !url) continue;
-
-    if (snippet.length > SNIPPET_LIMIT) {
-      snippet = snippet.substring(0, SNIPPET_LIMIT) + '...';
-    }
 
     results.push({ title, content: snippet, url });
   }
@@ -77,7 +68,7 @@ function formatSearchContext(results) {
     return parts.join('\n');
   });
 
-  return `【即時搜尋結果】(來源：SearXNG)\n請優先使用以下結果回答，若資訊不足請明確說明。\n${lines.join('\n')}`;
+  return `【即時搜尋結果】(來源：Tavily Search API)\n請優先使用以下結果回答，若資訊不足請明確說明。\n${lines.join('\n')}`;
 }
 
 async function buildSearchContextPayload(query) {
@@ -85,7 +76,6 @@ async function buildSearchContextPayload(query) {
   return formatSearchContext(results);
 }
 
-const BROWSE_CONTENT_LIMIT = 15000;
 const BROWSE_TIMEOUT_MS = 30000;
 
 async function runBrowse(url) {
@@ -104,12 +94,7 @@ async function runBrowse(url) {
     throw new Error(`Browse HTTP error: ${res.status}`);
   }
 
-  let content = await res.text();
-  if (content.length > BROWSE_CONTENT_LIMIT) {
-    content =
-      content.substring(0, BROWSE_CONTENT_LIMIT) + '\n\n[content truncated...]';
-  }
-  return content;
+  return await res.text();
 }
 
 function formatBrowseContext(url, content) {

@@ -1,6 +1,6 @@
 const API_URL = 'https://gemini-api.zssdmr.dpdns.org/';
 const PYTHON_API_URL = 'https://zssdmr-python.hf.space/';
-const SEARXNG_PROXY_URL = 'https://searxng-proxy.zssdmr.dpdns.org/';
+const SEARCH_PROXY_URL = 'https://search-proxy.zssdmr.dpdns.org/';
 const BROWSE_PROXY_URL = 'https://browse-proxy.zssdmr.dpdns.org/';
 
 const GEMINI_IMAGE_MIME_TYPES = [
@@ -45,10 +45,10 @@ plt.show()
 
 const SEARCH_SYSTEM_PROMPT_ADDITION = `
 【能力擴充通知】
-你現在擁有網路搜尋能力（SearXNG）：
+你現在擁有網路搜尋能力（Tavily Search API）：
 當你需要查詢最新資訊、時事，或使用者明確要求你搜尋時，你可以輸出一塊標頭為 \`execute-search\` 的程式碼區塊來進行搜尋：
 - 區塊內只需包含你想搜尋的「關鍵字」或「查詢語句」。
-- 系統會自動執行搜尋，並將 SearXNG 的搜尋結果回傳給你。
+- 系統會自動執行搜尋，並將 Tavily Search API 的搜尋結果回傳給你。
 
 格式範例：
 \`\`\`execute-search
